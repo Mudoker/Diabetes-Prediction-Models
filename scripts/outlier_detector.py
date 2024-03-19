@@ -1,8 +1,7 @@
-import pandas as pd
 import numpy as np
 
 
-class Utils:
+class OutlierDetector:
     def __init__(self):
         # constructor
         pass
