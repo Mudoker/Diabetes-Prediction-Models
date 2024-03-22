@@ -2,7 +2,7 @@
 
 ## _Assignment 1 - Patient Diabetes Prediction_
 
-<center><em><sub>"I declare that in submitting all work for this assessment I have read, understood and agree to the content and expectations of the Assessment declaration."</sub></em></center>
+_I declare that in submitting all work for this assessment I have read, understood and agree to the content and expectations of the Assessment declaration._
 
 ### Project Setup Guide
 
