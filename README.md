@@ -41,8 +41,6 @@ Before running this notebook, ensure you have the necessary libraries installed
 
   - Python 3.12.2: [Downloads](https://www.python.org/downloads/).
 
-&nbsp;
-
 - #### **Get the packages**
 
 ```bash
