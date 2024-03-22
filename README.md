@@ -39,7 +39,6 @@ Failure to follow these instructions may lead to import failures or difficulty i
 Before running this notebook, ensure you have the necessary libraries installed. You can install them using pip:
 
 ```bash
-    pip install --upgrade python # Ensure you have the latest version of Python
     pip install pandas numpy matplotlib seaborn scikit-learn # Install libraries
 ```
 
