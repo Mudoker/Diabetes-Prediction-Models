@@ -2,7 +2,7 @@
 
 ## _Assignment 1 - Patient Diabetes Prediction_
 
-_I declare that in submitting all work for this assessment I have read, understood and agree to the content and expectations of the Assessment declaration._
+This project aims to develop a machine learning model that can predict the likelihood of a patient having diabetes based on a provided dataset. By analyzing various patient characteristics, the model can learn patterns that differentiate diabetic and non-diabetic individuals
 
 ### Project Setup Guide
 
@@ -50,3 +50,5 @@ Before running this notebook, ensure you have the necessary libraries installed
 ### Author
 
 - [Huu Quoc Doan - s3927776](https://github.com/Mudoker)
+
+_I declare that in submitting all work for this assessment I have read, understood and agree to the content and expectations of the Assessment declaration._
