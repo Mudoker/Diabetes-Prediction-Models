@@ -37,11 +37,13 @@ This guide outlines the necessary steps to set up the project structure for mana
 
 Before running this notebook, ensure you have the necessary libraries installed
 
-#### **Get the latest version of Python**
+- #### **Get the latest version of Python**
 
-- Python 3.12.2: [Downloads](https://www.python.org/downloads/).
+  - Python 3.12.2: [Downloads](https://www.python.org/downloads/).
 
-#### **Get the packages**
+&nbsp;
+
+- #### **Get the packages**
 
 ```bash
     pip install pandas numpy matplotlib seaborn scikit-learn # Install libraries latest version
