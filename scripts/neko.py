@@ -50,3 +50,32 @@ class Neko:
             + str(round(data.memory_usage(index=True).sum() / (1024**2), 1))
             + " MB"
         )
+
+    def is_nan(self, data):
+        """
+        Returns True if the DataFrame contains NaN values.
+
+        Parameters:
+            data (DataFrame): The DataFrame to analyze.
+
+        Returns:
+            Array:
+            Index: 0: Column Name.
+            Index: 1: Number of NaN values.
+        """
+
+        if not isinstance(data, pd.DataFrame):
+            raise TypeError("Input must be a pandas DataFrame.")
+
+        if data.empty:
+            return "The DataFrame is empty."
+
+        try:
+            data.apply(pd.to_numeric, errors="coerce")
+        except ValueError:
+            return "The DataFrame contains non-numeric values."
+
+        if data.isnull().values.any():
+            return data.isnull().sum()
+        else:
+            return "The DataFrame does not contain any NaN values."
