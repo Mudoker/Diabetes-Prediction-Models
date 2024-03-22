@@ -36,11 +36,14 @@ Failure to follow these instructions may lead to import failures or difficulty i
 
 ### Installation
 
-Before running this notebook, ensure you have the necessary libraries installed. You can install them using pip:
+Before running this notebook, ensure you have the necessary libraries installed
 
-#### **Note**: It's recommended to use the latest version of Python. If you encounter any issues, consider installing Python 3.12.2 from [Python Downloads](https://www.python.org/downloads/).
+#### **Install the latest version of Python**: 
+   Get Python 3.12.2 from [Python Downloads](https://www.python.org/downloads/).
 
-
+#### **Install the dependancies**: 
+   Get Python 3.12.2 from [Python Downloads](https://www.python.org/downloads/).
+   
 ```bash
     pip install pandas numpy matplotlib seaborn scikit-learn # Install libraries latest version
 ```
