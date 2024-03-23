@@ -15,41 +15,32 @@ class Utils:
         Raises:
             None
         """
-        try:
-            if not requirements:
-                print("Error: requirements.txt is empty.")
-                return False
 
-            required_version = None
+        bullet = ">>>"
 
-            for line in requirements:
-                if package.__name__ in line.lower():
-                    required_version = line.split("==")[1].strip()
-                    break
-        except FileNotFoundError:
-            print("> Error: requirements.txt file not found. Aborting...\n")
-            return True
+        if not requirements:
+            print(f"{bullet} Error: requirements.txt is empty.")
+            return False
 
-        if not required_version:
+        required_version = None
+
+        for line in requirements:
+            if package.__name__ in line.lower():
+                required_version = line.split("==")[1].strip()
+                break
+
+        if required_version is None:
             print(
-                f"> Error: Could not find version information for {package.__name__} in requirements.txt. Skipping...\n"
+                f"{bullet} Error: Could not find version information for {package.__name__} in requirements.txt. Skipping..."
             )
             return False
 
-        if required_version != "":
-            if package.__version__ != required_version:
-                print(f"> Error: {package.__name__} version mismatch:")
-                print(f"  -> Require {package.__name__} {required_version}.")
-                print(f"  -> Current {package.__name__} {package.__version__}.")
-                print(
-                    f">>> Please update to the required version: {required_version} \n"
-                )
-                return False
-            else:
-                print(f"> {package.__name__} is up to date: {required_version}\n")
-                return True
+        if package.__version__ != required_version:
+            print(f"Error: {package.__name__} version mismatch:")
+            print(f"  -> Require {package.__name__} {required_version}.")
+            print(f"  -> Current {package.__name__} {package.__version__}.")
+            print(f"{bullet} Please update to the required version: {required_version}")
+            return False
         else:
-            print(
-                f"> Error: Could not find version information for {package.__name__} in requirements.txt. Skipping...\n"
-            )
-            return False
+            print(f"{bullet} {package.__name__} is up to date: {required_version}")
+            return True

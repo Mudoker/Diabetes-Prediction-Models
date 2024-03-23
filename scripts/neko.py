@@ -1,11 +1,12 @@
 import pandas as pd
+import tabulate
 
 NEKO_ART = r"""
 
     /\_____/\
-   /  o   o  \        Neko has arrived!
-  ( ==  ^  == )       An data visualizing extension for analyzing DataFrames.
-   )         (        Author: Quoc Doan
+   /  o   o  \
+  ( ==  ^  == )       Neko has arrived!
+   )         (        An data visualizing extension for analyzing DataFrames.
   (           )       Art: https://www.asciiart.eu/animals/cats.
  ( (  )   (  ) )
 (__(__)___(__)__)
@@ -31,10 +32,40 @@ class Neko:
 
     def __init__(self):
         self.data = pd.DataFrame()
-
         print(NEKO_ART)
 
-    def essense(self, data):
+    def greet(self):
+        """
+        Prints a greeting message.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
+        print(NEKO_ART)
+
+    def fit(self, data):
+        """
+        Store the provided DataFrame for analysis.
+
+        Parameters:
+            data (DataFrame): The DataFrame to analyze.
+
+        Returns:
+            None
+        """
+
+        if not isinstance(data, pd.DataFrame):
+            raise TypeError("Input must be a pandas DataFrame.")
+
+        if data.empty:
+            raise ValueError("The DataFrame is empty.")
+
+        self.data = data
+
+    def essense(self, stralign="left"):
         """
         Prints an overview of the provided DataFrame.
 
@@ -44,28 +75,30 @@ class Neko:
         Returns:
             String: A summary of the DataFrame.
         """
-
-        if not isinstance(data, pd.DataFrame):
-            raise TypeError("Input must be a pandas DataFrame.")
-
-        if data.empty:
-            return "The DataFrame is empty."
-
-        self.data = data
+        data = self.data
 
         payload = {
-            "rows": data.shape[0],
-            "columns": data.shape[1],
-            "data_types": data.dtypes.unique().tolist(),
-            "missing_values": {
-                "total": data.isnull().sum().sum(),
-                "at": data.columns[data.isnull().any()].tolist(),
-            },
-            "duplicates": data.duplicated().sum(),
-            "memory_usage": round(data.memory_usage(index=True).sum() / (1024**2), 1) # in MB,
+            "Number of Rows": data.shape[0],
+            "Number of Columns": data.shape[1],
+            "Data Types": data.dtypes.unique().astype(str).tolist(),
+            "Total Missing Values": data.isnull().sum().sum(),
+            "Columns with Missing Values": data.columns[data.isnull().any()].tolist(),
+            "Number of Duplicates": data.duplicated().sum(),
+            "Memory Usage (MB)": round(
+                data.memory_usage(index=True).sum() / (1024**2), 1
+            ),
         }
 
-        return payload
+        summary_table = [[key, value] for key, value in payload.items()]
+        tabulated_summary = tabulate.tabulate(
+            summary_table,
+            headers=["Attribute", "Value"],
+            tablefmt="rounded_outline",
+            stralign=stralign,
+            showindex=True,
+        )
+
+        return tabulated_summary
 
     def is_nan(self, data):
         """
