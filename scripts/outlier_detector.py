@@ -2,23 +2,34 @@ import numpy as np
 
 
 class OutlierDetector:
+    """
+    A class to detect outliers in a dataset.
+
+    Methods:
+        find_outliers_iqr: Find outliers using the Interquartile Range (IQR) method.
+        find_outliers_mad: Find outliers using Median Absolute Deviation (MAD).
+        find_outliers_normal: Find outliers using Z-score.
+    """
+
     def __init__(self):
         # constructor
         pass
 
-    def find_outliers_iqr(data, threshold=1.5):
+    def find_outliers_iqr(data, threshold=1.5, lower_quartile=25, upper_quartile=75):
         """
         Find outliers using the Interquartile Range (IQR) method.
 
         Parameters:
             data (array): The data for which outliers are to be detected.
             threshold (float, optional): The multiplier for the IQR to determine the range for outliers. Defaults to 1.5.
+            lower_quartile (int, optional): The lower quartile. Defaults to 25.
+            upper_quartile (int, optional): The upper quartile. Defaults to 75.
 
         Returns:
             numpy.ndarray: Array indicating outliers.
         """
         # Calculate the first and third quartiles
-        quartile_1, quartile_3 = np.percentile(data, [25, 75])
+        quartile_1, quartile_3 = np.percentile(data, [lower_quartile, upper_quartile])
 
         # Calculate the interquartile range (IQR)
         iqr = quartile_3 - quartile_1
@@ -65,6 +76,7 @@ class OutlierDetector:
 
         Parameters:
             data (array-like): The data for which outliers are to be detected.
+            threshold (float, optional): The threshold value to determine outliers. Defaults to 3.
 
         Returns:
             numpy.ndarray: Boolean array indicating outliers.

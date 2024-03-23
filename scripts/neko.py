@@ -10,6 +10,12 @@ class Neko:
 
     Methods:
         essense(data): Prints an overview of the provided DataFrame.
+
+        is_nan(data): Check if the DataFrame contains NaN values.
+
+        is_data_in_range(data, column, min_val, max_val): Check if the values in the specified column are within the provided range.
+
+        is_data_valid(data, column, valid_values): Check if the values in the specified column are within the provided list of valid values.
     """
 
     def __init__(self):
@@ -33,6 +39,7 @@ class Neko:
             return "The DataFrame is empty."
 
         self.data = data
+
         return (
             " - Number of rows: "
             + str(data.shape[0])

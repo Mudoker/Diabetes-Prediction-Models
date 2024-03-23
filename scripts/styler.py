@@ -9,7 +9,7 @@ class Styler:
         draw_box(text): Draws a box with text centered.
     """
 
-    def draw_box(self, text):
+    def draw_box(self, text, spacing=2):
         """
         Draws a box with text centered.
 
@@ -24,14 +24,13 @@ class Styler:
             raise TypeError("Input must be a string.")
 
         # Calculate width and height based on text size
-        width = len(text) + 4  # Add extra padding on both sides
-        height = 3
+        width = len(text) + spacing + 2  # Add extra padding on both sides
 
         # Top border
         print("┌" + "─" * (width) + "┐")
 
         # Middle row with text
-        print("│" + " " * 2 + text + " " * 2 + "│")
+        print("│" + " " * spacing + text + " " * spacing + "│")
 
         # Bottom border
         print("└" + "─" * (width) + "┘")
