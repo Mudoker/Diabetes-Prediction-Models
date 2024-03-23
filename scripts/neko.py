@@ -1,5 +1,16 @@
 import pandas as pd
 
+NEKO_ART = r"""
+
+    /\_____/\
+   /  o   o  \        Neko has arrived!
+  ( ==  ^  == )       An data visualizing extension for analyzing DataFrames.
+   )         (        Author: Quoc Doan
+  (           )       Art: https://www.asciiart.eu/animals/cats.
+ ( (  )   (  ) )
+(__(__)___(__)__)
+"""
+
 
 class Neko:
     """
@@ -20,6 +31,8 @@ class Neko:
 
     def __init__(self):
         self.data = pd.DataFrame()
+
+        print(NEKO_ART)
 
     def essense(self, data):
         """

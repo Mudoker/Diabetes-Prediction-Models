@@ -44,7 +44,7 @@ Before running this notebook, ensure you have the necessary libraries installed
 - #### **Get the packages**
 
 ```bash
-    pip install pandas numpy matplotlib seaborn scikit-learn # Install libraries latest version
+    pip install -r requirements.txt # Install libraries latest version
 ```
 
 ### Author

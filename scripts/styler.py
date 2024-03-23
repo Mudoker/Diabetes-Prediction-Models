@@ -62,3 +62,43 @@ class Styler:
 
         styled_text = formatting + text + "\033[0m"
         return styled_text
+
+    def to_table(self, data=[], columns=[], index=False, header=True):
+        """
+        Converts data into a formatted table.
+
+        Args:
+            data (List[List]): The data to be converted into a table.
+            columns (List): Optional. The column labels of the table.
+            index (bool): Optional. Whether to include row indices.
+            header (bool): Optional. Whether to include column headers.
+
+        Returns:
+            str: The formatted table as a string.
+        """
+
+        if not isinstance(data, list) or not all(isinstance(row, list) for row in data):
+            raise TypeError("Input data must be a list of lists.")
+
+        if columns and not all(isinstance(col, str) for col in columns):
+            raise TypeError("Column names must be strings.")
+
+        if not isinstance(index, bool) or not isinstance(header, bool):
+            raise TypeError("Index and header must be boolean values.")
+
+        # Create a table in AsciiDoc format
+        table = ""
+        if header:
+            if columns:
+                table += "|===\n| " + " | ".join(columns) + "\n"
+            else:
+                table += "|===\n"
+
+        for row in data:
+            table += "| " + " | ".join(str(cell) for cell in row) + "\n"
+
+        if index:
+            table = "[width='100%']\n" + table
+
+        table += "|===\n"
+        return table
