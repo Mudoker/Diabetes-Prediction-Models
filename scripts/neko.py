@@ -53,23 +53,19 @@ class Neko:
 
         self.data = data
 
-        return (
-            " - Number of rows: "
-            + str(data.shape[0])
-            + "\n - Number of columns: "
-            + str(data.shape[1])
-            + "\n - Data types: "
-            + str(data.dtypes.unique())
-            + "\n - # Missing values: "
-            + str(data.isnull().sum().sum())
-            + " at columns: "
-            + str(data.columns[data.isnull().any()].tolist())
-            + "\n - # Duplicate rows: "
-            + str(data.duplicated().sum())
-            + "\n - Data size: "
-            + str(round(data.memory_usage(index=True).sum() / (1024**2), 1))
-            + " MB"
-        )
+        payload = {
+            "rows": data.shape[0],
+            "columns": data.shape[1],
+            "data_types": data.dtypes.unique().tolist(),
+            "missing_values": {
+                "total": data.isnull().sum().sum(),
+                "at": data.columns[data.isnull().any()].tolist(),
+            },
+            "duplicates": data.duplicated().sum(),
+            "memory_usage": round(data.memory_usage(index=True).sum() / (1024**2), 1) # in MB,
+        }
+
+        return payload
 
     def is_nan(self, data):
         """
