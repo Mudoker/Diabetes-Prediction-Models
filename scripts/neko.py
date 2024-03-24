@@ -31,7 +31,6 @@ class Neko:
     """
 
     def __init__(self):
-        self.data = pd.DataFrame()
         print(NEKO_ART)
 
     def greet(self):
@@ -46,26 +45,7 @@ class Neko:
         """
         print(NEKO_ART)
 
-    def fit(self, data):
-        """
-        Store the provided DataFrame for analysis.
-
-        Parameters:
-            data (DataFrame): The DataFrame to analyze.
-
-        Returns:
-            None
-        """
-
-        if not isinstance(data, pd.DataFrame):
-            raise TypeError("Input must be a pandas DataFrame.")
-
-        if data.empty:
-            raise ValueError("The DataFrame is empty.")
-
-        self.data = data
-
-    def essense(self, stralign="left"):
+    def essense(self, data, stralign="left"):
         """
         Prints an overview of the provided DataFrame.
 
@@ -75,8 +55,6 @@ class Neko:
         Returns:
             String: A summary of the DataFrame.
         """
-        data = self.data
-
         payload = {
             "Number of Rows": data.shape[0],
             "Number of Columns": data.shape[1],
