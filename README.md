@@ -25,6 +25,8 @@ This guide outlines the necessary steps to set up the project structure for mana
 
      - **raw/**
        - _data_train.csv_
+     - **cleaned/**
+       - _data_train_cleaned.csv_
      - **processed/**
      - **test/**
        - _data_test.csv_
