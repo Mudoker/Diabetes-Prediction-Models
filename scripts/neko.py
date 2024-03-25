@@ -289,6 +289,30 @@ class Neko:
         title_fontweight=None,
         axis_label_fontsize=None,
     ):
+        """
+        Plot a histogram with a frequency polygon on the same plot.
+
+        Parameters:
+            data (array-like): Input data to plot.
+            axes (matplotlib.axes.Axes): The axes on which to plot the histogram and polygon.
+            bins (int or sequence, optional): Specification of histogram bins. Default is 10.
+            edgecolor (color, optional): Color of the histogram edges. Default is '#ff6172'.
+            alpha (float, optional): Transparency of the histogram bars. Default is 0.7.
+            color (color, optional): Color of the histogram bars. Default is '#ffcacf'.
+            marker (str, optional): Marker style for the frequency polygon. Default is 'o'.
+            linestyle (str, optional): Line style for the frequency polygon. Default is '-'.
+            line_color (color, optional): Color of the frequency polygon line. Default is 'r'.
+            title (str, optional): Title of the plot. Default is an empty string.
+            xlabel (str, optional): Label for the x-axis. Default is an empty string.
+            ylabel (str, optional): Label for the y-axis. Default is an empty string.
+            title_fontsize (int, optional): Font size for the title. Default is None.
+            title_fontweight (str or int, optional): Font weight for the title. Default is None.
+            axis_label_fontsize (int, optional): Font size for axis labels. Default is None.
+
+        Returns:
+            None
+        """
+
         # Plot histogram
         axes.hist(
             data,
