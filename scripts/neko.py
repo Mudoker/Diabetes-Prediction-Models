@@ -1,5 +1,7 @@
 import pandas as pd
 import tabulate
+import matplotlib.pyplot as plt
+import numpy as np
 
 NEKO_ART = r"""
 
@@ -210,15 +212,17 @@ class Neko:
             "Feature": feature,
             "Data Type": data[feature].dtype,
             "Total Values": data[feature].count(),
+            "Missing Values": data[feature].isnull().sum(),
             "Unique Values": data[feature].nunique(),
-            "Total Missing Values": data[feature].isnull().sum(),
             "Minimum Value": data[feature].min(),
+            "25th Percentile": data[feature].quantile(0.25),
+            "Median": data[feature].median(),
+            "75th Percentile": data[feature].quantile(0.75),
             "Maximum Value": data[feature].max(),
             "Mean": data[feature].mean(),
-            "Median": data[feature].median(),
             "Standard Deviation": data[feature].std(),
             "Skewness": data[feature].skew(),
-            "IQR": data[feature].quantile(0.75) - data[feature].quantile(0.25),
+            "Kurtosis": data[feature].kurtosis(),
             "Memory Usage (MB)": round(data[feature].memory_usage() / (1024**2), 1),
         }
 
@@ -233,3 +237,84 @@ class Neko:
         )
 
         return tabulated_summary
+
+    def plot_pie_chart(
+        self,
+        ax,
+        count,
+        title,
+        colors,
+        title_fontsize=20,
+        title_fontweight="semibold",
+        axis_label_fontsize=15,
+    ):
+        """
+        Plot a pie chart on the given axes.
+
+        Parameters:
+            ax (matplotlib.axes.Axes): The axes on which to plot the pie chart.
+            count (pandas.Series): The data to be plotted.
+            title (str): The title of the pie chart.
+            colors (list): List of colors for each pie slice.
+            title_fontsize (int, optional): Font size of the title. Default is 20.
+            title_fontweight (str, optional): Font weight of the title. Default is "semibold".
+            axis_label_fontsize (int, optional): Font size of the axis labels. Default is 15.
+        """
+
+        ax.pie(
+            count,
+            labels=count.index,
+            autopct="%1.1f%%",
+            startangle=90,
+            colors=colors,
+            textprops={"fontsize": axis_label_fontsize},
+        )
+        ax.set_title(title, fontsize=title_fontsize, fontweight=title_fontweight)
+
+    def plot_histogram_with_polygon(
+        self,
+        data,
+        axes,
+        bins=10,
+        edgecolor="#ff6172",
+        alpha=0.7,
+        color="#ffcacf",
+        marker="o",
+        linestyle="-",
+        line_color="r",
+        title="",
+        xlabel="",
+        ylabel="",
+        title_fontsize=None,
+        title_fontweight=None,
+        axis_label_fontsize=None,
+    ):
+        # Plot histogram
+        axes.hist(
+            data,
+            bins=bins,
+            edgecolor=edgecolor,
+            alpha=alpha,
+            label="Histogram",
+            color=color,
+        )
+
+        # Plot frequency polygon
+        frequencies, bin_edges = np.histogram(data, bins=bins)
+        bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+        axes.plot(
+            bin_centers,
+            frequencies,
+            marker=marker,
+            linestyle=linestyle,
+            color=line_color,
+            label="Frequency Polygon",
+        )
+
+        # Set title and labels
+        if title:
+            axes.set_title(title, fontsize=title_fontsize, fontweight=title_fontweight)
+        if xlabel:
+            axes.set_xlabel(xlabel, fontsize=axis_label_fontsize)
+        if ylabel:
+            axes.set_ylabel(ylabel, fontsize=axis_label_fontsize)
