@@ -45,7 +45,7 @@ class Neko:
         """
         print(NEKO_ART)
 
-    def essense(self, data, stralign="left"):
+    def essense(self, data, stralign="left", tablefmt="rounded_grid"):
         """
         Prints an overview of the provided DataFrame.
 
@@ -71,7 +71,7 @@ class Neko:
         tabulated_summary = tabulate.tabulate(
             summary_table,
             headers=["Attribute", "Value"],
-            tablefmt="rounded_outline",
+            tablefmt=tablefmt,
             stralign=stralign,
             showindex=True,
         )
@@ -194,3 +194,42 @@ class Neko:
                 "message": f"{sum(~valid_values)} invalid values found.",
                 "is_valid": False,
             }
+
+    def feature_essence(self, data, feature, stralign="left", tablefmt="rounded_grid"):
+        """
+        Prints an overview of the provided feature in the DataFrame.
+
+        Parameters:
+            data (DataFrame): The DataFrame to analyze.
+            feature (String): The feature to analyze.
+
+        Returns:
+            String: A summary of the feature.
+        """
+        payload = {
+            "Feature": feature,
+            "Data Type": data[feature].dtype,
+            "Total Values": data[feature].count(),
+            "Unique Values": data[feature].nunique(),
+            "Total Missing Values": data[feature].isnull().sum(),
+            "Minimum Value": data[feature].min(),
+            "Maximum Value": data[feature].max(),
+            "Mean": data[feature].mean(),
+            "Median": data[feature].median(),
+            "Standard Deviation": data[feature].std(),
+            "Skewness": data[feature].skew(),
+            "IQR": data[feature].quantile(0.75) - data[feature].quantile(0.25),
+            "Memory Usage (MB)": round(data[feature].memory_usage() / (1024**2), 1),
+        }
+
+        summary_table = [[key, value] for key, value in payload.items()]
+
+        tabulated_summary = tabulate.tabulate(
+            summary_table,
+            headers=["Attribute", "Value"],
+            tablefmt=tablefmt,
+            stralign=stralign,
+            showindex=True,
+        )
+
+        return tabulated_summary

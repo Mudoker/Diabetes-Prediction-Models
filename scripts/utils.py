@@ -25,7 +25,12 @@ class Utils:
         required_version = None
 
         for line in requirements:
-            if package.__name__ in line.lower():
+            package_name = package.__name__
+
+            if package_name == "sklearn":
+                package_name = "scikit-learn"
+
+            if package_name in line.lower():
                 required_version = line.split("==")[1].strip()
                 break
 
