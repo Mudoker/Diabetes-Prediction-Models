@@ -2,6 +2,8 @@ import pandas as pd
 import tabulate
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.ticker import MaxNLocator
+import seaborn as sns
 
 NEKO_ART = r"""
 
@@ -342,3 +344,112 @@ class Neko:
             axes.set_xlabel(xlabel, fontsize=axis_label_fontsize)
         if ylabel:
             axes.set_ylabel(ylabel, fontsize=axis_label_fontsize)
+
+    def data_visualization(
+        column_name: str,
+        data: pd.DataFrame,
+        figsize=(20, 8),
+        title_fontsize=20,
+        title_fontweight="semibold",
+        axis_label_fontsize=15,
+    ):
+        """
+        Function to visualize the distribution of a column using box plot and KDE plot.
+
+        Parameters:
+            column_name (str): The name of the column to visualize.
+            data (pd.DataFrame): The DataFrame containing the data.
+            figsize (tuple): Size of the figure (default: (20, 8)).
+            title_fontsize (int): Font size of the titles (default: 20).
+            title_fontweight (str): Font weight of the titles (default: "semibold").
+            axis_label_fontsize (int): Font size of the axis labels (default: 15).
+
+        Returns:
+            None
+        """
+
+        # Create subplots for box plot and KDE plot
+        fig, axes = plt.subplots(1, 2, figsize=figsize)
+        column_data = data[column_name]
+
+        # Plot box plot
+        sns.boxplot(data=column_data, ax=axes[0], color="#ff2c43")
+        axes[0].set_title(
+            f"Box Plot of {column_name}",
+            fontsize=title_fontsize,
+            fontweight=title_fontweight,
+        )
+        axes[0].set_xlabel(column_name, fontsize=axis_label_fontsize)
+
+        # Plot KDE plot
+        sns.kdeplot(data=column_data, ax=axes[1], fill=True, color="#ff2c43")
+        axes[1].set_title(
+            f"KDE Plot of {column_name}",
+            fontsize=title_fontsize,
+            fontweight=title_fontweight,
+        )
+        axes[1].set_xlabel(column_name, fontsize=axis_label_fontsize)
+
+        # Set integer ticks on x-axis of box plot
+        for ax in axes:
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+        plt.tight_layout()
+        plt.show()
+
+    def data_frequency(
+        column_name,
+        data: pd.DataFrame,
+        is_pie_chart=True,
+        figsize=(20, 8),
+        title_fontsize=20,
+        title_fontweight="semibold",
+        axis_label_fontsize=15,
+    ):
+        """
+        Function to visualize the frequency distribution of a column using a pie chart and histogram with frequency polygon.
+
+        Parameters:
+            column_name (str): The name of the column to visualize.
+            data (pd.DataFrame): The DataFrame containing the data.
+            is_pie_chart (bool): Flag indicating whether to display a pie chart (default: True).
+            figsize (tuple): Size of the figure (default: (20, 8)).
+            title_fontsize (int): Font size of the titles (default: 20).
+            title_fontweight (str): Font weight of the titles (default: "semibold").
+            axis_label_fontsize (int): Font size of the axis labels (default: 15).
+
+        Returns:
+            None
+        """
+        # Create a new figure
+        fig, axes = plt.subplots(1, 2 if is_pie_chart else 1, figsize=figsize)
+
+        # Plot pie chart if enabled
+        if is_pie_chart:
+            value_count = data[column_name].value_counts()
+            neko.plot_pie_chart(
+                axes[0],
+                value_count,
+                f"Distribution of {column_name}",
+                ["#FF617299", "#ffcacf", "#FF6372", "#FF6972", "#FF6E72"],
+                title_fontsize=title_fontsize,
+                title_fontweight=title_fontweight,
+                axis_label_fontsize=axis_label_fontsize,
+            )
+
+        # Plot histogram with frequency polygon
+        neko.plot_histogram_with_polygon(
+            data=data[column_name],
+            axes=axes[1] if is_pie_chart else axes,
+            bins=20,
+            title="Histogram with Frequency Polygon",
+            xlabel="Value",
+            ylabel="Frequency",
+            title_fontsize=title_fontsize,
+            title_fontweight=title_fontweight,
+            axis_label_fontsize=axis_label_fontsize,
+        )
+
+        # Adjust layout and show plot
+        plt.tight_layout()
+        plt.show()
