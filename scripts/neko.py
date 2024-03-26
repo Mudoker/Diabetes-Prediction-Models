@@ -346,6 +346,7 @@ class Neko:
             axes.set_ylabel(ylabel, fontsize=axis_label_fontsize)
 
     def data_visualization(
+        self,
         column_name: str,
         data: pd.DataFrame,
         figsize=(20, 8),
@@ -398,6 +399,7 @@ class Neko:
         plt.show()
 
     def data_frequency(
+        self,
         column_name,
         data: pd.DataFrame,
         is_pie_chart=True,
@@ -427,7 +429,7 @@ class Neko:
         # Plot pie chart if enabled
         if is_pie_chart:
             value_count = data[column_name].value_counts()
-            neko.plot_pie_chart(
+            self.plot_pie_chart(
                 axes[0],
                 value_count,
                 f"Distribution of {column_name}",
@@ -438,7 +440,7 @@ class Neko:
             )
 
         # Plot histogram with frequency polygon
-        neko.plot_histogram_with_polygon(
+        self.plot_histogram_with_polygon(
             data=data[column_name],
             axes=axes[1] if is_pie_chart else axes,
             bins=20,
