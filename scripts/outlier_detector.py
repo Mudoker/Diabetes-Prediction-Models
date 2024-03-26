@@ -1,4 +1,5 @@
 import numpy as np
+import tabulate
 
 
 class OutlierDetector:
@@ -15,7 +16,15 @@ class OutlierDetector:
         # constructor
         pass
 
-    def find_outliers_iqr(data, threshold=1.5, lower_quartile=25, upper_quartile=75):
+    def find_outliers_iqr(
+        self,
+        data,
+        threshold=1.5,
+        lower_quartile=25,
+        upper_quartile=75,
+        tablefmt="rounded_grid",
+        numalign="center",
+    ):
         """
         Find outliers using the Interquartile Range (IQR) method.
 
@@ -43,7 +52,34 @@ class OutlierDetector:
             value for value in data if value > upper_bound or value < lower_bound
         ]
 
-        return outliers
+        outliers_text = ""
+        if outliers:
+            # Get unique outliers
+            unique_outliers = set(outliers)
+            outliers_text += ", ".join(
+                str(outlier) for outlier in list(unique_outliers)[:5]
+            )
+            if len(unique_outliers) > 5:
+                outliers_text += ", ..."
+        else:
+            outliers_text += "None"
+
+        payload = {
+            "Unique Outliers": outliers_text,
+            "Lower Bound": lower_bound,
+            "Upper Bound": upper_bound,
+            "Threshold": threshold,
+            "Total Outliers": len(outliers),
+        }
+
+        table = tabulate.tabulate(
+            payload.items(),
+            headers=["Key", "Value"],
+            tablefmt=tablefmt,
+            numalign=numalign,
+        )
+
+        return table
 
     def find_outliers_mad(data, threshold=3.5):
         """
