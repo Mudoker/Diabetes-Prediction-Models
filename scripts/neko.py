@@ -368,6 +368,7 @@ class Neko:
         Returns:
             None
         """
+        data[column_name].replace([np.inf, -np.inf], np.nan, inplace=True)
 
         # Create subplots for box plot and KDE plot
         fig, axes = plt.subplots(1, 2, figsize=figsize)
