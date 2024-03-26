@@ -368,36 +368,34 @@ class Neko:
         Returns:
             None
         """
+        # Create subplots for box plot and KDE plot
+        fig, axes = plt.subplots(1, 2, figsize=figsize)
+        column_data = data[column_name]
 
-        with pd.option_context("mode.use_inf_as_na", True):
-            # Create subplots for box plot and KDE plot
-            fig, axes = plt.subplots(
-                1, 2, figsize=(12, 6)
-            )  # Adjust the figsize as needed
-            column_data = data[
-                column_name
-            ]  # Assuming 'data' is your DataFrame and 'column_name' is the name of the column
+        # Plot box plot
+        sns.boxplot(data=column_data, ax=axes[0], color="#ff2c43")
+        axes[0].set_title(
+            f"Box Plot of {column_name}",
+            fontsize=title_fontsize,
+            fontweight=title_fontweight,
+        )
+        axes[0].set_xlabel(column_name, fontsize=axis_label_fontsize)
 
-            # Plot box plot
-            sns.boxplot(data=column_data, ax=axes[0], color="#ff2c43")
-            axes[0].set_title(
-                f"Box Plot of {column_name}", fontsize=14, fontweight="bold"
-            )
-            axes[0].set_xlabel(column_name, fontsize=12)
+        # Plot KDE plot
+        sns.kdeplot(data=column_data, ax=axes[1], fill=True, color="#ff2c43")
+        axes[1].set_title(
+            f"KDE Plot of {column_name}",
+            fontsize=title_fontsize,
+            fontweight=title_fontweight,
+        )
+        axes[1].set_xlabel(column_name, fontsize=axis_label_fontsize)
 
-            # Plot KDE plot
-            sns.kdeplot(data=column_data, ax=axes[1], fill=True, color="#ff2c43")
-            axes[1].set_title(
-                f"KDE Plot of {column_name}", fontsize=14, fontweight="bold"
-            )
-            axes[1].set_xlabel(column_name, fontsize=12)
+        # Set integer ticks on x-axis of box plot
+        for ax in axes:
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
-            # Set integer ticks on x-axis of box plot
-            for ax in axes:
-                ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-
-            plt.tight_layout()
-            plt.show()
+        plt.tight_layout()
+        plt.show()
 
     def data_frequency(
         self,
