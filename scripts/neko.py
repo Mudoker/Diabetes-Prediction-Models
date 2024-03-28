@@ -310,7 +310,7 @@ class Neko:
             title_fontsize (int, optional): Font size for the title. Default is None.
             title_fontweight (str or int, optional): Font weight for the title. Default is None.
             axis_label_fontsize (int, optional): Font size for axis labels. Default is None.
-
+            left_chart (str, optional): Type of left chart (default: "boxplot").
         Returns:
             None
         """
@@ -353,6 +353,7 @@ class Neko:
         title_fontsize=20,
         title_fontweight="semibold",
         axis_label_fontsize=15,
+        left_chart="violin",
     ):
         """
         Function to visualize the distribution of a column using box plot and KDE plot.
@@ -372,10 +373,14 @@ class Neko:
         fig, axes = plt.subplots(1, 2, figsize=figsize)
         column_data = data[column_name]
 
-        # Plot box plot
-        sns.boxplot(data=column_data, ax=axes[0], color="#ff2c43")
+        # Plot distribution plot
+        if left_chart == "boxplot":
+            sns.boxplot(data=column_data, ax=axes[0], color="#FF617299")
+        else:
+            sns.violinplot(data=column_data, ax=axes[0], color="#FF617299")
+
         axes[0].set_title(
-            f"Box Plot of {column_name}",
+            f"Distribution Plot of {column_name}",
             fontsize=title_fontsize,
             fontweight=title_fontweight,
         )
