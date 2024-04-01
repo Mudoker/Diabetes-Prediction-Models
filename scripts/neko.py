@@ -1,9 +1,13 @@
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
 import tabulate
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MaxNLocator
 import seaborn as sns
+import statsmodels.api as sm
 
 NEKO_ART = r"""
 
@@ -461,3 +465,61 @@ class Neko:
         # Adjust layout and show plot
         plt.tight_layout()
         plt.show()
+
+    def logistic_regression_analysis(self, data, columns):
+        """
+        Perform logistic regression analysis on the provided data.
+
+        Parameters:
+            data (numpy.ndarray): Input data array.
+            columns (list): List of column names. The last column represents the target variable.
+
+        Returns:
+            str: 2 tables summarizing the logistic regression analysis results.
+        """
+        # Get features (X) and target variable (y)
+        X_index = [columns.index(col) for col in columns[:-1]]
+        y_index = columns.index(columns[-1])
+        X = data[:, X_index]
+        y = data[:, y_index]
+
+        # Split the data into training and testing sets
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
+
+        # Initialize logistic regression model
+        model = LogisticRegression(max_iter=1000)
+
+        # Train the model
+        model.fit(X_train, y_train)
+
+        # Make predictions
+        y_pred = model.predict(X_test)
+
+        X_train_sm = sm.add_constant(X_train)
+
+        # Fit the logistic regression model (without optimization message)
+        with np.errstate(invalid="ignore"):
+            logit_model = sm.Logit(y_train, X_train_sm)
+            result = logit_model.fit(disp=False)
+
+        # Format outputs
+        conf_matrix = confusion_matrix(y_test, y_pred)
+
+        conf_matrix_table = [
+            ["", "Predicted Negative", "Predicted Positive"],
+            ["Actual Negative", conf_matrix[0][0], conf_matrix[0][1]],
+            ["Actual Positive", conf_matrix[1][0], conf_matrix[1][1]],
+        ]
+
+        print("\nConfusion Matrix:")
+        print(
+            tabulate.tabulate(
+                conf_matrix_table, headers="firstrow", tablefmt="rounded_grid"
+            )
+        )
+
+        print()
+
+        print(result.summary())
