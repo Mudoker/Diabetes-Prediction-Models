@@ -369,6 +369,8 @@ class Neko:
         Returns:
             None
         """
+        sns.set_style("whitegrid")
+
         # Create subplots for box plot and KDE plot
         fig, axes = plt.subplots(1, 2, figsize=figsize)
         column_data = data[column_name]
