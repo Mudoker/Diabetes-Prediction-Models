@@ -192,7 +192,7 @@ class Neko:
             "Data Type": data[feature].dtype,
             "Total / Missing Values": f"{data[feature].count()} / {data[feature].isnull().sum()}",
             "Range": f"{data[feature].min()} - {data[feature].max()}",
-            "Percentiles": f"{data[feature].quantile(0.25)} - {data[feature].quantile(0.75)}",
+            "Percentiles (25-75)": f"{data[feature].quantile(0.25)} - {data[feature].quantile(0.75)}",
             "Median": data[feature].median(),
             "Mean": data[feature].mean(),
             "Standard Deviation": data[feature].std(),
