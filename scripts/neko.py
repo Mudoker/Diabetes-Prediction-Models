@@ -69,7 +69,7 @@ class Neko:
             "Number of Rows": data.shape[0],
             "Number of Columns": data.shape[1],
             "Data Types": data.dtypes.unique().astype(str).tolist(),
-            "Total Missing Values": data.isnull().sum().sum(),
+            "Total Missing Values": data.isnull().sum(),
             "Columns with Missing Values": data.columns[data.isnull().any()].tolist(),
             "Number of Duplicates": data.duplicated().sum(),
             "Memory Usage (MB)": round(
@@ -87,33 +87,6 @@ class Neko:
         )
 
         return tabulated_summary
-
-    def is_nan(self, data):
-        """
-        Check if the DataFrame contains NaN values.
-
-        Parameters:
-            data (DataFrame): The DataFrame to analyze.
-
-        Returns:
-            String: A message indicating if the DataFrame contains NaN values.
-        """
-
-        if not isinstance(data, pd.DataFrame):
-            raise TypeError("Input must be a pandas DataFrame.")
-
-        if data.empty:
-            return "The DataFrame is empty."
-
-        try:
-            data.apply(pd.to_numeric, errors="coerce")
-        except ValueError:
-            return "The DataFrame contains non-numeric values."
-
-        if data.isnull().values.any():
-            return data.isnull().sum()
-        else:
-            return "The DataFrame does not contain any NaN values."
 
     def is_data_in_range(self, data, column, min_val, max_val):
         """
