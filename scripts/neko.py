@@ -315,6 +315,7 @@ class Neko:
         is_pie_chart=True,
         is_violin_plot=True,
         is_box_plot=False,
+        is_kde=False,
         figsize=(20, 8),
         title_fontsize=16,
         title_fontweight="semibold",
@@ -358,7 +359,7 @@ class Neko:
 
         if is_violin_plot:
             # Plot violin plot
-            sns.violinplot(y=data[column_name], ax=axes[1], color="#FF6172")
+            sns.violinplot(y=data[column_name], ax=axes[pos], color="#FF6172")
             pos += 1
 
         if is_box_plot:
@@ -367,7 +368,7 @@ class Neko:
             pos += 1
 
         # Plot histogram with frequency polygon
-        if pos == 1:
+        if is_kde:
             sns.kdeplot(data[column_name], ax=axes[pos], color="#FF6172", fill=True)
         else:
             # Plot histogram with frequency polygon
