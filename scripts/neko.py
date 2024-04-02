@@ -313,6 +313,8 @@ class Neko:
         column_name,
         data: pd.DataFrame,
         is_pie_chart=True,
+        is_violin_plot=True,
+        is_box_plot=False,
         figsize=(20, 8),
         title_fontsize=16,
         title_fontweight="semibold",
@@ -335,13 +337,14 @@ class Neko:
             None
         """
         # Create a new figure
-        fig, axes = plt.subplots(1, 3, figsize=figsize)
+        fig, axes = plt.subplots(1, 1 + is_pie_chart + is_violin_plot + is_box_plot, figsize=figsize)
         fig.suptitle(
             f"Distribution of {column_name}",
             fontsize=title_fontsize,
             fontweight=title_fontweight,
         )
 
+        pos = 0
         # Plot pie chart if enabled
         if is_pie_chart:
             value_count = data[column_name].value_counts()
@@ -351,16 +354,28 @@ class Neko:
                 ["#FF617299", "#ffcacf", "#FF6372", "#FF6972", "#FF6E72"],
                 axis_label_fontsize=axis_label_fontsize,
             )
+            pos += 1
 
-        # Plot violin plot
-        sns.violinplot(y=data[column_name], ax=axes[1], color="#FF6172")
+        if is_violin_plot:
+            # Plot violin plot
+            sns.violinplot(y=data[column_name], ax=axes[1], color="#FF6172")
+            pos += 1
+
+        if is_box_plot:
+            # Plot box plot
+            sns.boxplot(y=data[column_name], ax=axes[pos], color="#FF6172")
+            pos += 1
 
         # Plot histogram with frequency polygon
-        self.plot_histogram_with_polygon(
-            data=data[column_name],
-            ax=axes[2],
-            index=index,
-        )
+        if pos == 1:
+            sns.kdeplot(data[column_name], ax=axes[pos], color="#FF6172", fill=True)
+        else:
+            # Plot histogram with frequency polygon
+            self.plot_histogram_with_polygon(
+                data=data[column_name],
+                ax=axes[pos],
+                index=index,
+            )
 
         # Adjust layout and show plot
         plt.tight_layout()
