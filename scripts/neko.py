@@ -13,9 +13,8 @@ import statsmodels.api as sm
 from sklearn.preprocessing import PolynomialFeatures
 
 NEKO_ART = r"""
-
     /\_____/\
-   /  o   o  \
+   /  x   o  \
   ( ==  ^  == )       Neko has arrived!
    )         (        An data visualizing extension for analyzing DataFrames.
   (           )       Art: https://www.asciiart.eu/animals/cats.
