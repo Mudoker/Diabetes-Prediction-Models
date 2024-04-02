@@ -7,7 +7,6 @@ from sklearn.metrics import classification_report, confusion_matrix
 import tabulate
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.ticker import MaxNLocator
 import seaborn as sns
 import statsmodels.api as sm
 from sklearn.preprocessing import PolynomialFeatures
@@ -223,10 +222,7 @@ class Neko:
         self,
         ax,
         count,
-        title,
         colors,
-        title_fontsize=20,
-        title_fontweight="semibold",
         axis_label_fontsize=15,
     ):
         """
@@ -235,7 +231,6 @@ class Neko:
         Parameters:
             ax (matplotlib.axes.Axes): The axes on which to plot the pie chart.
             count (pandas.Series): The data to be plotted.
-            title (str): The title of the pie chart.
             colors (list): List of colors for each pie slice.
             title_fontsize (int, optional): Font size of the title. Default is 20.
             title_fontweight (str, optional): Font weight of the title. Default is "semibold".
@@ -250,24 +245,18 @@ class Neko:
             colors=colors,
             textprops={"fontsize": axis_label_fontsize},
         )
-        ax.set_title(title, fontsize=title_fontsize, fontweight=title_fontweight)
 
     def plot_histogram_with_polygon(
         self,
         data,
         ax,
-        bins=10,
         edgecolor="#ff6172",
         alpha=0.7,
         color="#ffcacf",
         marker="o",
         linestyle="-",
         line_color="r",
-        title="",
-        xlabel="",
         ylabel="",
-        title_fontsize=None,
-        title_fontweight=None,
         axis_label_fontsize=None,
         index=False,
     ):
@@ -284,8 +273,6 @@ class Neko:
         marker (str, optional): Frequency polygon marker style. Defaults to 'o'.
         linestyle (str, optional): Frequency polygon line style. Defaults to '-'.
         line_color (color, optional): Frequency polygon line color. Defaults to 'r'.
-        title (str, optional): Plot title. Defaults to ''.
-        xlabel (str, optional): X-axis label. Defaults to ''.
         ylabel (str, optional): Y-axis label. Defaults to ''.
         title_fontsize (int, optional): Title font size.
         title_fontweight (str or int, optional): Title font weight.
@@ -321,7 +308,6 @@ class Neko:
         ax.bar(data.index, data.values, color=color, edgecolor=edgecolor, alpha=alpha)
 
         # Setting plot title, labels, and formatting
-        ax.set_title(title, fontsize=title_fontsize, fontweight=title_fontweight)
         ax.set_ylabel(ylabel, fontsize=axis_label_fontsize)
 
         # Format x-axis label
@@ -330,78 +316,19 @@ class Neko:
         # Display the plot
         plt.show()
 
-    def data_visualization(
-        self,
-        column_name: str,
-        data: pd.DataFrame,
-        figsize=(20, 8),
-        title_fontsize=20,
-        title_fontweight="semibold",
-        axis_label_fontsize=15,
-        left_chart="violin",
-    ):
-        """
-        Function to visualize the distribution of a column using box plot and KDE plot.
-
-        Parameters:
-            column_name (str): The name of the column to visualize.
-            data (pd.DataFrame): The DataFrame containing the data.
-            figsize (tuple): Size of the figure (default: (20, 8)).
-            title_fontsize (int): Font size of the titles (default: 20).
-            title_fontweight (str): Font weight of the titles (default: "semibold").
-            axis_label_fontsize (int): Font size of the axis labels (default: 15).
-
-        Returns:
-            None
-        """
-        sns.set_style("whitegrid")
-
-        # Create subplots for box plot and KDE plot
-        fig, axes = plt.subplots(1, 2, figsize=figsize)
-        column_data = data[column_name]
-
-        # Plot distribution plot
-        if left_chart == "boxplot":
-            sns.boxplot(data=column_data, ax=axes[0], color="#FF617299")
-        else:
-            sns.violinplot(data=column_data, ax=axes[0], color="#FF617299")
-
-        axes[0].set_title(
-            f"Distribution Plot of {column_name}",
-            fontsize=title_fontsize,
-            fontweight=title_fontweight,
-        )
-        axes[0].set_xlabel(column_name, fontsize=axis_label_fontsize)
-
-        # Plot KDE plot
-        sns.kdeplot(data=column_data, ax=axes[1], fill=True, color="#ff2c43")
-        axes[1].set_title(
-            f"KDE Plot of {column_name}",
-            fontsize=title_fontsize,
-            fontweight=title_fontweight,
-        )
-        axes[1].set_xlabel(column_name, fontsize=axis_label_fontsize)
-
-        # Set integer ticks on x-axis of box plot
-        for ax in axes:
-            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-
-        plt.tight_layout()
-        plt.show()
-
     def data_frequency(
         self,
         column_name,
         data: pd.DataFrame,
         is_pie_chart=True,
         figsize=(20, 8),
-        title_fontsize=20,
+        title_fontsize=16,
         title_fontweight="semibold",
-        axis_label_fontsize=15,
+        axis_label_fontsize=12,
         index=True,
     ):
         """
-        Function to visualize the frequency distribution of a column using a pie chart and histogram with frequency polygon.
+        Function to visualize the frequency distribution of a column using a pie chart, violin plot, and histogram with frequency polygon.
 
         Parameters:
             column_name (str): The name of the column to visualize.
@@ -416,7 +343,12 @@ class Neko:
             None
         """
         # Create a new figure
-        fig, axes = plt.subplots(1, 2 if is_pie_chart else 1, figsize=figsize)
+        fig, axes = plt.subplots(1, 3, figsize=figsize)
+        fig.suptitle(
+            f"Distribution of {column_name}",
+            fontsize=title_fontsize,
+            fontweight=title_fontweight,
+        )
 
         # Plot pie chart if enabled
         if is_pie_chart:
@@ -424,23 +356,17 @@ class Neko:
             self.plot_pie_chart(
                 axes[0],
                 value_count,
-                f"Distribution of {column_name}",
                 ["#FF617299", "#ffcacf", "#FF6372", "#FF6972", "#FF6E72"],
-                title_fontsize=title_fontsize,
-                title_fontweight=title_fontweight,
                 axis_label_fontsize=axis_label_fontsize,
             )
+
+        # Plot violin plot
+        sns.violinplot(y=data[column_name], ax=axes[1], color="#FF6172")
 
         # Plot histogram with frequency polygon
         self.plot_histogram_with_polygon(
             data=data[column_name],
-            ax=axes[1] if is_pie_chart else axes,
-            title="Histogram with Frequency Polygon",
-            xlabel="Value",
-            ylabel="Occurrence",
-            title_fontsize=title_fontsize,
-            title_fontweight=title_fontweight,
-            axis_label_fontsize=axis_label_fontsize,
+            ax=axes[2],
             index=index,
         )
 
