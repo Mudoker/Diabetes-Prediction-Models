@@ -1,4 +1,6 @@
 import pandas as pd
+from imblearn.over_sampling import SMOTE
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
@@ -8,6 +10,7 @@ import numpy as np
 from matplotlib.ticker import MaxNLocator
 import seaborn as sns
 import statsmodels.api as sm
+from sklearn.preprocessing import PolynomialFeatures
 
 NEKO_ART = r"""
 
@@ -478,37 +481,35 @@ class Neko:
         Perform logistic regression analysis on the provided data.
 
         Parameters:
-            data (numpy.ndarray): Input data array.
+            data (DataFrame): Input data DataFrame.
             columns (list): List of column names. The last column represents the target variable.
 
         Returns:
             str: 2 tables summarizing the logistic regression analysis results.
         """
         # Get features (X) and target variable (y)
-        X_index = [columns.index(col) for col in columns[:-1]]
-        y_index = columns.index(columns[-1])
-        X = data[:, X_index]
-        y = data[:, y_index]
+        X = data[columns[:-1]]  # Features
+        y = data[columns[-1]]  # Target variable
 
         # Split the data into training and testing sets
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+        # Apply SMOTE to balance classes
+        smote = SMOTE(random_state=42)
+        X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
+
+        # Initialize and train logistic regression model
+        model = LogisticRegression(max_iter=1000).fit(
+            X_train_balanced, y_train_balanced
         )
-
-        # Initialize logistic regression model
-        model = LogisticRegression(max_iter=1000)
-
-        # Train the model
-        model.fit(X_train, y_train)
 
         # Make predictions
         y_pred = model.predict(X_test)
 
-        X_train_sm = sm.add_constant(X_train)
-
-        # Fit the logistic regression model (without optimization message)
+        # Summary tables
+        X_train_sm = sm.add_constant(X_train_balanced)
         with np.errstate(invalid="ignore"):
-            logit_model = sm.Logit(y_train, X_train_sm)
+            logit_model = sm.Logit(y_train_balanced, X_train_sm)
             result = logit_model.fit(disp=False)
 
         # Format outputs
@@ -529,4 +530,8 @@ class Neko:
 
         print()
 
+        # Print summary
         print(result.summary())
+
+        print()
+        print("Accuracy:", model.score(X_test, y_test))
