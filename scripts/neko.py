@@ -189,21 +189,13 @@ class Neko:
             String: A summary of the feature.
         """
         payload = {
-            "Feature": feature,
             "Data Type": data[feature].dtype,
-            "Total Values": data[feature].count(),
-            "Missing Values": data[feature].isnull().sum(),
-            "Unique Values": data[feature].nunique(),
-            "Minimum Value": data[feature].min(),
-            "25th Percentile": data[feature].quantile(0.25),
+            "Total / Missing Values": f"{data[feature].count()} / {data[feature].isnull().sum()}",
+            "Range": f"{data[feature].min()} - {data[feature].max()}",
+            "Percentiles": f"{data[feature].quantile(0.25)} - {data[feature].quantile(0.75)}",
             "Median": data[feature].median(),
-            "75th Percentile": data[feature].quantile(0.75),
-            "Maximum Value": data[feature].max(),
             "Mean": data[feature].mean(),
             "Standard Deviation": data[feature].std(),
-            "Skewness": data[feature].skew(),
-            "Kurtosis": data[feature].kurtosis(),
-            "Memory Usage (MB)": round(data[feature].memory_usage() / (1024**2), 1),
         }
 
         summary_table = [[key, value] for key, value in payload.items()]
@@ -300,7 +292,7 @@ class Neko:
             )
 
             for x, y in zip(data.index, data.values):
-                ax.text(x, y, f"{y}", ha="center", va="bottom", fontsize=11)
+                ax.text(x, y, f"{y}", ha="center", va="bottom", fontsize=9)
 
             ax.set_xticks(data.index)
 
