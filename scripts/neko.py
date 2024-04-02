@@ -280,7 +280,7 @@ class Neko:
     def plot_histogram_with_polygon(
         self,
         data,
-        axes,
+        ax,
         bins=10,
         edgecolor="#ff6172",
         alpha=0.7,
@@ -294,60 +294,66 @@ class Neko:
         title_fontsize=None,
         title_fontweight=None,
         axis_label_fontsize=None,
+        index=False,
     ):
         """
         Plot a histogram with a frequency polygon on the same plot.
 
         Parameters:
-            data (array-like): Input data to plot.
-            axes (matplotlib.axes.Axes): The axes on which to plot the histogram and polygon.
-            bins (int or sequence, optional): Specification of histogram bins. Default is 10.
-            edgecolor (color, optional): Color of the histogram edges. Default is '#ff6172'.
-            alpha (float, optional): Transparency of the histogram bars. Default is 0.7.
-            color (color, optional): Color of the histogram bars. Default is '#ffcacf'.
-            marker (str, optional): Marker style for the frequency polygon. Default is 'o'.
-            linestyle (str, optional): Line style for the frequency polygon. Default is '-'.
-            line_color (color, optional): Color of the frequency polygon line. Default is 'r'.
-            title (str, optional): Title of the plot. Default is an empty string.
-            xlabel (str, optional): Label for the x-axis. Default is an empty string.
-            ylabel (str, optional): Label for the y-axis. Default is an empty string.
-            title_fontsize (int, optional): Font size for the title. Default is None.
-            title_fontweight (str or int, optional): Font weight for the title. Default is None.
-            axis_label_fontsize (int, optional): Font size for axis labels. Default is None.
-            left_chart (str, optional): Type of left chart (default: "boxplot").
+        data (array-like): Input data.
+        ax (Axes): Axes for plotting (optional).
+        bins (int or sequence, optional): Histogram bin specification. Defaults to 10.
+        edgecolor (color, optional): Histogram edge color. Defaults to '#ff6172'.
+        alpha (float, optional): Histogram bar transparency. Defaults to 0.7.
+        color (color, optional): Histogram bar color. Defaults to '#ffcacf'.
+        marker (str, optional): Frequency polygon marker style. Defaults to 'o'.
+        linestyle (str, optional): Frequency polygon line style. Defaults to '-'.
+        line_color (color, optional): Frequency polygon line color. Defaults to 'r'.
+        title (str, optional): Plot title. Defaults to ''.
+        xlabel (str, optional): X-axis label. Defaults to ''.
+        ylabel (str, optional): Y-axis label. Defaults to ''.
+        title_fontsize (int, optional): Title font size.
+        title_fontweight (str or int, optional): Title font weight.
+        axis_label_fontsize (int, optional): Axis label font size.
+
         Returns:
-            None
+        None
         """
 
-        # Plot histogram
-        axes.hist(
-            data,
-            bins=bins,
-            edgecolor=edgecolor,
-            alpha=alpha,
-            label="Histogram",
-            color=color,
-        )
+        # Create a figure and axis if not provided
+        if ax is None:
+            fig, ax = plt.subplots()
 
-        # Plot frequency polygon
-        frequencies, bin_edges = np.histogram(data, bins=bins)
-        bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
-        axes.plot(
-            bin_centers,
-            frequencies,
-            marker=marker,
-            linestyle=linestyle,
-            color=line_color,
-            label="Frequency Polygon",
-        )
+        # Display data
+        data = data.value_counts().sort_index()
 
-        # Set title and labels
-        if title:
-            axes.set_title(title, fontsize=title_fontsize, fontweight=title_fontweight)
-        if xlabel:
-            axes.set_xlabel(xlabel, fontsize=axis_label_fontsize)
-        if ylabel:
-            axes.set_ylabel(ylabel, fontsize=axis_label_fontsize)
+        if index:
+            # Plot the frequency polygon line
+            ax.plot(
+                data.index,
+                data.values,
+                marker=marker,
+                linestyle=linestyle,
+                color=line_color,
+            )
+
+            for x, y in zip(data.index, data.values):
+                ax.text(x, y, f"{y}", ha="center", va="bottom", fontsize=11)
+
+            ax.set_xticks(data.index)
+
+        # Plot the histogram bars
+        ax.bar(data.index, data.values, color=color, edgecolor=edgecolor, alpha=alpha)
+
+        # Setting plot title, labels, and formatting
+        ax.set_title(title, fontsize=title_fontsize, fontweight=title_fontweight)
+        ax.set_ylabel(ylabel, fontsize=axis_label_fontsize)
+
+        # Format x-axis label
+        ax.tick_params(axis="x", rotation=0)
+
+        # Display the plot
+        plt.show()
 
     def data_visualization(
         self,
@@ -417,6 +423,7 @@ class Neko:
         title_fontsize=20,
         title_fontweight="semibold",
         axis_label_fontsize=15,
+        index=True,
     ):
         """
         Function to visualize the frequency distribution of a column using a pie chart and histogram with frequency polygon.
@@ -452,14 +459,14 @@ class Neko:
         # Plot histogram with frequency polygon
         self.plot_histogram_with_polygon(
             data=data[column_name],
-            axes=axes[1] if is_pie_chart else axes,
-            bins=20,
+            ax=axes[1] if is_pie_chart else axes,
             title="Histogram with Frequency Polygon",
             xlabel="Value",
-            ylabel="Frequency",
+            ylabel="Occurrence",
             title_fontsize=title_fontsize,
             title_fontweight=title_fontweight,
             axis_label_fontsize=axis_label_fontsize,
+            index=index,
         )
 
         # Adjust layout and show plot
