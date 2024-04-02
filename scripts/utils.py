@@ -29,6 +29,9 @@ class Utils:
 
             if package_name == "sklearn":
                 package_name = "scikit-learn"
+                
+            if package_name == "imblearn":
+                package_name = "imbalanced-learn"
 
             if package_name in line.lower():
                 required_version = line.split("==")[1].strip()
