@@ -67,8 +67,8 @@ class Neko:
         payload = {
             "Number of Rows": data.shape[0],
             "Number of Columns": data.shape[1],
-            "Data Types": data.dtypes.unique().astype(str).tolist(),
-            "Total Missing Values": data.isnull().sum(),
+            "Data Types": ", ".join(data.dtypes.unique().astype(str).tolist()),
+            "Total Missing Values": data.isnull().sum().sum(),
             "Columns with Missing Values": data.columns[data.isnull().any()].tolist(),
             "Number of Duplicates": data.duplicated().sum(),
             "Memory Usage (MB)": round(
@@ -338,7 +338,9 @@ class Neko:
             None
         """
         # Create a new figure
-        fig, axes = plt.subplots(1, 1 + is_pie_chart + is_violin_plot + is_box_plot, figsize=figsize)
+        fig, axes = plt.subplots(
+            1, 1 + is_pie_chart + is_violin_plot + is_box_plot, figsize=figsize
+        )
         fig.suptitle(
             f"Distribution of {column_name}",
             fontsize=title_fontsize,
@@ -382,41 +384,31 @@ class Neko:
         plt.tight_layout()
         plt.show()
 
-    def logistic_regression_analysis(self, data, columns):
+    def logistic_regression_analysis(self, data, features, target):
         """
         Perform logistic regression analysis on the provided data.
 
         Parameters:
             data (DataFrame): Input data DataFrame.
-            columns (list): List of column names. The last column represents the target variable.
+            features (List): List of feature columns.
+            target (String): Target column.
 
         Returns:
-            str: 2 tables summarizing the logistic regression analysis results.
+            str: Two tables summarizing the logistic regression analysis results.
         """
         # Get features (X) and target variable (y)
-        X = data[columns[:-1]]  # Features
-        y = data[columns[-1]]  # Target variable
+        X = data[features]
+        y = data[target]
 
         # Split the data into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-        # Apply SMOTE to balance classes
-        smote = SMOTE(random_state=42)
-        X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
-
         # Initialize and train logistic regression model
-        model = LogisticRegression(max_iter=1000).fit(
-            X_train_balanced, y_train_balanced
-        )
+        model = LogisticRegression(max_iter=1000)
+        model.fit(X_train, y_train)
 
         # Make predictions
         y_pred = model.predict(X_test)
-
-        # Summary tables
-        X_train_sm = sm.add_constant(X_train_balanced)
-        with np.errstate(invalid="ignore"):
-            logit_model = sm.Logit(y_train_balanced, X_train_sm)
-            result = logit_model.fit(disp=False)
 
         # Format outputs
         conf_matrix = confusion_matrix(y_test, y_pred)
@@ -427,17 +419,13 @@ class Neko:
             ["Actual Positive", conf_matrix[1][0], conf_matrix[1][1]],
         ]
 
-        print("\nConfusion Matrix:")
-        print(
-            tabulate.tabulate(
-                conf_matrix_table, headers="firstrow", tablefmt="rounded_grid"
-            )
+        output = "\nConfusion Matrix:\n"
+        output += tabulate.tabulate(
+            conf_matrix_table, headers="firstrow", tablefmt="grid"
         )
-
-        print()
+        output += "\n\n"
 
         # Print summary
-        print(result.summary())
+        output += "\n\nAccuracy: {:.2f}%".format(model.score(X_test, y_test) * 100)
 
-        print()
-        print("Accuracy:", model.score(X_test, y_test))
+        return output
