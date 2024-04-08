@@ -456,9 +456,9 @@ class Neko:
 
         # Over-sampling with appropriate sampler based on method
         sampler = {
-            "SMOTE": SMOTE(random_state=random_state),
+            "smote": SMOTE(random_state=random_state),
             "random": RandomOverSampler(),
-        }.get(method.upper())
+        }.get(method)
 
         if sampler is None:
             raise ValueError(
