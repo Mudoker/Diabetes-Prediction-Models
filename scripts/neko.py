@@ -1,5 +1,6 @@
 import pandas as pd
 from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import RandomOverSampler
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
@@ -429,3 +430,45 @@ class Neko:
         output += "\n\nAccuracy: {:.2f}%".format(model.score(X_test, y_test) * 100)
 
         return output
+
+    def over_sampling(self, data, target, method="smote", random_state=42):
+        """
+        Perform over-sampling using SMOTE on the provided data.
+
+        Parameters:
+            data (DataFrame): Input data DataFrame.
+            target (String): Target column.
+            method (String): The over-sampling method to use. Default is "smote".
+            random_state (int): Random state for reproducibility. Default is 42.
+        Returns:
+            DataFrame: The over-sampled data.
+        """
+        # Error handling
+        if not isinstance(data, pd.DataFrame):
+            raise TypeError("Input must be a pandas DataFrame.")
+
+        if target not in data.columns:
+            raise ValueError("The target column does not exist in the DataFrame.")
+
+        # Separate features and target (avoid unnecessary copy)
+        X = data.drop(target, axis=1)
+        y = data[target]
+
+        # Over-sampling with appropriate sampler based on method
+        sampler = {
+            "SMOTE": SMOTE(random_state=random_state),
+            "random": RandomOverSampler(),
+        }.get(method.upper())
+
+        if sampler is None:
+            raise ValueError(
+                "Invalid over-sampling method. Choose 'SMOTE' or 'random'."
+            )
+
+        # Perform over-sampling on separate arrays
+        X_over, y_over = sampler.fit_resample(X, y)
+
+        # Combine features and target into a new DataFrame (clear separation)
+        data_over = pd.concat([X_over, pd.DataFrame(y_over, columns=[target])], axis=1)
+
+        return data_over
