@@ -508,3 +508,28 @@ class Neko:
         data_scaled = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
 
         return data_scaled
+
+    def log_transform(self, data, columns):
+        """
+        Log-transform the features in the provided data.
+
+        Parameters:
+            data (DataFrame): Input data DataFrame.
+            columns (list): List of columns to be log-transformed.
+
+        Returns:
+            DataFrame: The log-transformed data.
+        """
+        # Error handling
+        if not isinstance(data, pd.DataFrame):
+            raise TypeError("Input must be a pandas DataFrame.")
+
+        for column in columns:
+            if column not in data.columns:
+                raise ValueError(f"Column '{column}' not found in the DataFrame.")
+
+        # Log-transform specified columns
+        data_log = data.copy()
+        data_log[columns] = np.log(data_log[columns])
+
+        return data_log

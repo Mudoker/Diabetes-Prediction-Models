@@ -29,7 +29,7 @@ class OutlierDetector:
         Find outliers using the Interquartile Range (IQR) method.
 
         Parameters:
-            data (array): The data for which outliers are to be detected.
+            data (DataFrame): The data for which outliers are to be detected.
             threshold (float, optional): The multiplier for the IQR to determine the range for outliers. Defaults to 1.5.
             lower_quartile (int, optional): The lower quartile. Defaults to 25.
             upper_quartile (int, optional): The upper quartile. Defaults to 75.
