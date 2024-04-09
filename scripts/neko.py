@@ -1,7 +1,7 @@
 import warnings
 import pandas as pd
-from imblearn.over_sampling import SMOTE
-from imblearn.over_sampling import RandomOverSampler
+from imblearn.over_sampling import SMOTE # type: ignore
+from imblearn.over_sampling import RandomOverSampler # type: ignore
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
