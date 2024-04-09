@@ -1,3 +1,4 @@
+import warnings
 import pandas as pd
 from imblearn.over_sampling import SMOTE
 from imblearn.over_sampling import RandomOverSampler
@@ -9,8 +10,9 @@ import tabulate
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-import statsmodels.api as sm
-from sklearn.preprocessing import PolynomialFeatures
+
+# Feature scaling
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 NEKO_ART = r"""
     /\_____/\
@@ -472,3 +474,37 @@ class Neko:
         data_over = pd.concat([X_over, pd.DataFrame(y_over, columns=[target])], axis=1)
 
         return data_over
+
+    def scale_feature(self, data, method="norm"):
+        """
+        Scale the features in the provided data using the specified method.
+
+        Parameters:
+            data (DataFrame): Input data DataFrame.
+            method (String): The scaling method to use. Default is "norm".
+
+        Returns:
+            DataFrame: The scaled data.
+        """
+        # Error handling
+        if not isinstance(data, pd.DataFrame):
+            raise TypeError("Input must be a pandas DataFrame.")
+
+        # Scale features using appropriate scaler based on method
+        scaler = {
+            "norm": MinMaxScaler(),
+            "standard": StandardScaler(),
+        }.get(method)
+
+        if scaler is None:
+            raise ValueError("Invalid scaling method. Choose 'norm' or 'standard'.")
+
+        if method == "standard" and (data.skew().abs() > 1).any():
+            print(
+                ">>> Warning: StandardScaler may not work well with highly skewed data. Consider using MinMaxScaler."
+            )
+
+        # Apply scaling to all columns
+        data_scaled = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
+
+        return data_scaled
