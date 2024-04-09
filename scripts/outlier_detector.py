@@ -79,20 +79,28 @@ class OutlierDetector:
             numalign=numalign,
         )
 
-        return table
+        return {
+            "table": table,
+            "lower_bound": lower_bound,
+            "upper_bound": upper_bound,
+            "total_outliers": len(outliers),
+        }
 
-    def find_outliers_mad(data, threshold=3.5):
+    def find_outliers_mad(
+        self, data, threshold=3.5, tablefmt="rounded_grid", numalign="center"
+    ):
         """
         Find outliers using Median Absolute Deviation (MAD).
 
         Parameters:
             data (array): The data for which outliers are to be detected.
             threshold (float, optional): The threshold value to determine outliers. Defaults to 3.5.
+            tablefmt (str, optional): Format for the output table. Defaults to "rounded_grid".
+            numalign (str, optional): Alignment for numeric columns. Defaults to "center".
 
         Returns:
-            numpy.ndarray: array indicating outliers.
+            str: Table presenting outlier detection results.
         """
-
         # Calculate median
         median = np.median(data)
         mad = np.median(np.abs(data - median))
@@ -103,8 +111,28 @@ class OutlierDetector:
 
         # Identify outliers
         outliers = (data < lower_limit) | (data > upper_limit)
+        outliers_indices = np.where(outliers)[0]
 
-        return outliers
+        outliers_text = ", ".join(str(data[i]) for i in outliers_indices[:5])
+        if len(outliers_indices) > 5:
+            outliers_text += ", ..."
+
+        payload = {
+            "Outliers": outliers_text,
+            "Lower Bound": lower_limit,
+            "Upper Bound": upper_limit,
+            "Threshold": threshold,
+            "Total Outliers": np.sum(outliers),
+        }
+
+        table = tabulate.tabulate(
+            payload.items(),
+            headers=["Key", "Value"],
+            tablefmt=tablefmt,
+            numalign=numalign,
+        )
+
+        return table
 
     def find_outliers_normal(data, threshold=3):
         """
