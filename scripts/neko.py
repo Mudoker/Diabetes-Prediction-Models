@@ -1,7 +1,13 @@
 import warnings
 import pandas as pd
-from imblearn.over_sampling import SMOTE # type: ignore
-from imblearn.over_sampling import RandomOverSampler # type: ignore
+from imblearn.over_sampling import (
+    SMOTE,
+    BorderlineSMOTE,
+    SVMSMOTE,
+    ADASYN,
+    RandomOverSampler,
+)  # noqa
+from imblearn.under_sampling import RandomUnderSampler, NearMiss  # noqa
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
@@ -433,7 +439,7 @@ class Neko:
 
         return output
 
-    def over_sampling(self, data, target, method="smote", random_state=42):
+    def resample_data(self, data, target, method="smote", random_state=42):
         """
         Perform over-sampling using SMOTE on the provided data.
 
@@ -459,12 +465,17 @@ class Neko:
         # Over-sampling with appropriate sampler based on method
         sampler = {
             "smote": SMOTE(random_state=random_state),
-            "random": RandomOverSampler(),
+            "random_over": RandomOverSampler(random_state=random_state),
+            "borderline_smote": BorderlineSMOTE(random_state=random_state),
+            "svm_smote": SVMSMOTE(random_state=random_state),
+            "adasyn": ADASYN(random_state=random_state),
+            "random_under": RandomUnderSampler(random_state=random_state),
+            "nearmiss": NearMiss(),
         }.get(method)
 
         if sampler is None:
             raise ValueError(
-                "Invalid over-sampling method. Choose 'SMOTE' or 'random'."
+                "Invalid resampling method. Choose from: 'smote', 'random_over', 'borderline_smote', 'svm_smote', 'adasyn', 'random_under', 'nearmiss'."
             )
 
         # Perform over-sampling on separate arrays
