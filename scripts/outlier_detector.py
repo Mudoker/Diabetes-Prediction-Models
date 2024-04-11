@@ -99,7 +99,7 @@ class OutlierDetector:
             numalign (str, optional): Alignment for numeric columns. Defaults to "center".
 
         Returns:
-            str: Table presenting outlier detection results.
+            dict: Dictionary containing outlier detection results.
         """
         # Calculate median
         median = np.median(data)
@@ -113,6 +113,7 @@ class OutlierDetector:
         outliers = (data < lower_limit) | (data > upper_limit)
         outliers_indices = np.where(outliers)[0]
 
+        # Format outliers text
         outliers_text = ", ".join(str(data[i]) for i in outliers_indices[:5])
         if len(outliers_indices) > 5:
             outliers_text += ", ..."
@@ -132,7 +133,12 @@ class OutlierDetector:
             numalign=numalign,
         )
 
-        return table
+        return {
+            "table": table,
+            "lower_bound": lower_limit,
+            "upper_bound": upper_limit,
+            "total_outliers": np.sum(outliers),
+        }
 
     def find_outliers_normal(data, threshold=3):
         """
