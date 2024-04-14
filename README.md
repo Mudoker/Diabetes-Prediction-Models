@@ -6,34 +6,7 @@ This project aims to develop a machine learning model that can predict the likel
 
 ### Project Setup Guide
 
-This guide outlines the necessary steps to set up the project structure for managing datasets and notebooks effectively.
-
-### Folder Structure
-
-1. **Data Folder:**
-
-   - Contains raw and processed datasets.
-
-2. **Notebooks Folder:**
-
-   - Contains notebooks for data analysis and training models.
-
-3. **Models Folder:**
-   **Root Folder:**
-
-   - **data/**
-
-     - **raw/**
-       - _data_train.csv_
-     - **cleaned/**
-       - _data_train_cleaned.csv_
-     - **processed/**
-     - **test/**
-       - _data_test.csv_
-
-   - **notebooks/**
-     - **data_analysis/**
-       - _exploratory_data_analysis.ipynb_
+This guide outlines the necessary steps to set up the project structure for managing datasets and notebooks effectively. Moreover, please notice that changes in the file location might result in libraries not importing correctly.
 
 ### Installation
 
