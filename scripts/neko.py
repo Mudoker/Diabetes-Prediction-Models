@@ -19,6 +19,8 @@ import numpy as np
 import seaborn as sns
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
+from sklearn.metrics import make_scorer
 
 # Feature scaling
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -575,21 +577,6 @@ class Neko:
         print("Classification Report for Training Data:\n", train_report)
         print("Classification Report for Testing Data:\n", test_report)
 
-        # Step 4: Calculate accuracy scores
-        train_accuracy = accuracy_score(y_train, y_train_pred)
-        test_accuracy = accuracy_score(y_test, y_test_pred)
-
-        print("Accuracy on Training Data:", train_accuracy)
-        print("Accuracy on Testing Data:", test_accuracy)
-
-        # Step 5: Compare performance metrics
-        if train_accuracy > test_accuracy:
-            print("\nThe model is overfitting to the training data.")
-        elif train_accuracy < test_accuracy:
-            print("\nThe model is underfitting to the training data.")
-        else:
-            print("\nThe model is performing well on both training and testing data.")
-
     def post_pruning(
         self,
         model,
@@ -597,8 +584,9 @@ class Neko:
         y_train,
         X_test,
         y_test,
-        classifier="descision_tree",
-        plot=True,
+        classifier="decision_tree",
+        n_iterations=60,
+        n_jobs=1,
     ):
         """
         Find the best ccp_alpha value using cost complexity pruning path and plot the train/test accuracy.
@@ -610,71 +598,54 @@ class Neko:
             X_test (DataFrame): The test features.
             y_test (Series): The test target variable.
             classifier (str, optional): Classifier type. Defaults to "decision_tree".
-            plot (bool): Flag to plot the train/test accuracy vs. ccp_alpha. Default is True.
+            n_iterations (int): Number of iterations for RandomizedSearchCV. Default is 60.
 
         Returns:
             float: The optimal ccp_alpha value.
         """
 
         # Error handling
-        if classifier not in ["decision_tree", "random_forest"]:
+        if classifier != "decision_tree" and classifier != "random_forest":
             raise ValueError(
-                "Invalid model. Choose 'DecisionTreeClassifier' or 'RandomForestClassifier'."
+                "Invalid classifier type. Choose 'decision_tree' or 'random_forest'."
             )
 
         # Get CCP alpha values and impurities
-        clf = model
-        path = clf.cost_complexity_pruning_path(X_train, y_train)
+        path = model.cost_complexity_pruning_path(X_train, y_train)
         ccp_alphas, impurities = path.ccp_alphas, path.impurities
 
-        # Store training and testing scores for each alpha
-        train_scores = []
-        test_scores = []
+        # Define a custom scoring function for RandomizedSearchCV
+        def score_function(y_true, y_pred):
+            train_score = accuracy_score(y_train, y_pred)
+            test_score = accuracy_score(y_test, y_pred)
+            return abs(train_score - test_score)
 
-        for ccp_alpha in ccp_alphas:
-            # Create classifier instance with current CCP alpha
-            if classifier == "decision_tree":
-                clf = DecisionTreeClassifier(random_state=42, ccp_alpha=ccp_alpha)
-            elif classifier == "random_forest":
-                clf = RandomForestClassifier(random_state=42, ccp_alpha=ccp_alpha)
+        # Create the scorer
+        scorer = make_scorer(score_function, greater_is_better=False)
 
-            # Train the model and make predictions
-            clf.fit(X_train, y_train)
-            train_pred = clf.predict(X_train)
-            test_pred = clf.predict(X_test)
+        # Define parameter grid for decision tree
+        param_grid = {"ccp_alpha": ccp_alphas.tolist()}
 
-            # Calculate accuracy scores
-            train_accuracy = accuracy_score(y_train, train_pred)
-            test_accuracy = accuracy_score(y_test, test_pred)
+        # Create RandomizedSearchCV object
+        if classifier == "random_forest":
+            estimator = RandomForestClassifier(random_state=42)
+        elif classifier == "decision_tree":
+            estimator = DecisionTreeClassifier(random_state=42)
 
-            # Store scores
-            train_scores.append(train_accuracy)
-            test_scores.append(test_accuracy)
+        random_search = GridSearchCV(
+            estimator=estimator,
+            param_grid=param_grid,
+            # n_iter=n_iterations,
+            cv=5,
+            scoring=scorer,
+            # random_state=42,
+            n_jobs=n_jobs,
+        )
 
-        # Plot train/test accuracy vs CCP alpha (optional)
-        if plot:
-            plt.figure(figsize=(10, 6))
-            plt.plot(
-                ccp_alphas,
-                train_scores,
-                marker="o",
-                label="Train",
-                drawstyle="steps-post",
-            )
-            plt.plot(
-                ccp_alphas,
-                test_scores,
-                marker="o",
-                label="Test",
-                drawstyle="steps-post",
-            )
-            plt.xlabel("ccp_alphas")
-            plt.ylabel("Accuracy")
-            plt.title("Train/Test Accuracy vs. ccp_alphas")
-            plt.legend()
-            plt.show()
+        # Perform randomized search
+        random_search.fit(X_train, y_train)
 
-        # Find the optimal ccp_alpha value that maximizes the test accuracy
-        optimal_alpha = ccp_alphas[test_scores.index(max(test_scores))]
+        # Get the best alpha value
+        best_alpha = random_search.best_params_["ccp_alpha"]
 
-        return optimal_alpha
+        return best_alpha
